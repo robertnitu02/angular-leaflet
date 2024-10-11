@@ -1,8 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { Observable, Subscriber } from 'rxjs';
 import * as L from 'leaflet';
-
-import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -17,49 +14,45 @@ export class AppComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    this.loadMap();
+    this.initMap();
+    this.initMarkers();
   }
 
-  private getCurrentPosition(): any {
-    return new Observable((observer: Subscriber<any>) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position: any) => {
-          observer.next({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-          observer.complete();
-        });
-      } else {
-        observer.error();
-      }
+  private initMap(): void {
+    this.map = L.map('map', {
+      crs: L.CRS.Simple,
+      center: [-42.0, 35.0],
+      zoom: 3,
     });
+
+    const tiles = L.tileLayer('https://gta5-map.github.io/tiles/road/{z}-{x}_{y}.png?{foo}', {
+      // @ts-ignore
+      foo: 'bar',
+      attribution: 'B-Zone V MLOS Map',
+      maxZoom:7,
+      minZoom: 3,
+      tileSize: 256,
+    });
+
+    tiles.addTo(this.map);
   }
 
-  private loadMap(): void {
-    this.map = L.map('map').setView([0, 0], 1);
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
-      id: 'mapbox/streets-v11',
-      tileSize: 512,
-      zoomOffset: -1,
-      accessToken: environment.mapbox.accessToken,
+  private initMarkers() {
+    if (this.map === undefined) return;
+
+    const marker = L.marker(this.map.getCenter(), {
+      // icon: new L.Icon({
+      //   iconUrl: `https://i.imgur.com/OC9J7iM.png`,
+      //   iconSize:     [20, 20],
+      //   iconAnchor:   [20, 20],
+      //   popupAnchor:  [-10, -27]
+      // }),
+      icon: new L.DivIcon({
+        html: `<img src='https://i.imgur.com/OC9J7iM.png' style="width: 100%; height: 100%"/> <span>Test</span>`
+      }),
+      title: 'test',
+      alt: 'alt',
+      keyboard: true,
     }).addTo(this.map);
-
-    this.getCurrentPosition()
-    .subscribe((position: any) => {
-      this.map.flyTo([position.latitude, position.longitude], 13);
-
-      const icon = L.icon({
-        iconUrl: 'assets/images/marker-icon.png',
-        shadowUrl: 'assets/images/marker-shadow.png',
-        popupAnchor: [13, 0],
-      });
-
-      const marker = L.marker([position.latitude, position.longitude], { icon }).bindPopup('Angular Leaflet');
-      marker.addTo(this.map);
-    });
   }
-
 }
