@@ -1,4 +1,8 @@
 <div class="map-container">
+  <div class="map-interaction">
+    <button class="btn btn-primary" (click)="toggleCreatorMode()">Toggle Creator Mode {{inCreatorMode ? 'ON' : 'OFF'}}</button>
+    <h3 *ngIf="inCreatorMode">{{ JSON.stringify(markers) }}</h3>
+  </div>
   <div class="map-frame">
     <div id="map"></div>
   </div>
