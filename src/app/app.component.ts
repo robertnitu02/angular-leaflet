@@ -1,7 +1,6 @@
-import {AfterViewInit, Component} from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import * as L from 'leaflet';
 import { Marker, markers} from "./markers.model";
-import {marker} from "leaflet";
 
 @Component({
   selector: 'app-root',
@@ -11,7 +10,6 @@ import {marker} from "leaflet";
 export class AppComponent implements AfterViewInit {
 
   map: any;
-  inCreatorMode = false;
 
   constructor() {
   }
@@ -22,14 +20,13 @@ export class AppComponent implements AfterViewInit {
 
     this.map.on("click", (e: any) => {
       console.log(e.latlng); // get the coordinates
-      if (!this.inCreatorMode) return
-      const markerData =  {
-        lat: e.latlng.lat,
-        lng: e.latlng.lng,
-        iconUrl: 'https://i.imgur.com/OC9J7iM.png',
-        bindPopup: 'Added Marker',
-      };
-      this.createMarker(markerData, true);
+      // const markerData =  {
+      //   lat: e.latlng.lat,
+      //   lng: e.latlng.lng,
+      //   iconUrl: 'https://i.imgur.com/OC9J7iM.png',
+      //   bindPopup: 'Added Marker',
+      // };
+      // this.createMarker(markerData);
     });
   }
 
@@ -43,7 +40,7 @@ export class AppComponent implements AfterViewInit {
     const tiles = L.tileLayer('https://gta5-map.github.io/tiles/road/{z}-{x}_{y}.png?{foo}', {
       // @ts-ignore
       foo: 'bar',
-      attribution: 'B-Zone V MLOS Map',
+      attribution: 'GTA V Map Leaflet',
       maxZoom: 7,
       minZoom: 3,
       tileSize: 256,
@@ -70,20 +67,9 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
-  private createMarker(marker: Marker, isNew = false) {
+  private createMarker(marker: Marker) {
     L.marker([marker.lat, marker.lng], {
       icon: this.createIcon(marker.iconUrl),
     }).addTo(this.map).bindPopup(marker.bindPopup);
-
-    if (!isNew) return;
-    this.map.setView([marker.lat, marker.lng], 10);
-    this.markers.push(marker);
   }
-
-  toggleCreatorMode() {
-    this.inCreatorMode = !this.inCreatorMode;
-  }
-
-  protected readonly markers = markers;
-  protected readonly JSON = JSON;
 }

@@ -6,10 +6,10 @@ export interface Marker {
 }
 
 export const markers: Marker[] = [
-  {
-    lat: 0,
-    lng: 0,
-    iconUrl: `https://i.imgur.com/OC9J7iM.png`,
-    bindPopup: 'alt',
-  }
+  // {
+  //   lat: -58.921875,
+  //   lng: 37.1796875,
+  //   iconUrl: `https://i.imgur.com/OC9J7iM.png`,
+  //   bindPopup: 'B-Zone V Project',
+  // }
 ];
